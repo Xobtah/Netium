@@ -4,3 +4,6 @@
 [submodule "Basium"]
 	path = Basium
 	url = https://github.com/Xobtah/Basium.git
+[submodule "Emitium"]
+	path = Emitium
+	url = https://github.com/Xobtah/Emitium.git

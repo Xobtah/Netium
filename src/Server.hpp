@@ -16,6 +16,8 @@
 #include "../Poolium/src/IThreadRunner.hpp"
 #include "../Poolium/src/Thread.hpp"
 
+#include "../Emitium/src/EventEmitter.hpp"
+
 #define PACKET_MAX_SIZE 512
 
 namespace Netium
@@ -34,7 +36,7 @@ namespace Netium
     };
 
     // Server
-    class Server : public Poolium::IThreadRunner
+    class Server : public Poolium::IThreadRunner, public Emitium::EventEmitter
     {
     public:
         friend class Poolium::Thread;
@@ -60,8 +62,8 @@ namespace Netium
 
         int     CreateFdSet(fd_set*);
         int     OSSelect(int, fd_set*, fd_set *writefd = NULL, struct timeval *to = NULL, fd_set *exceptfd = NULL);
-        bool    NewClient();
-        bool    RemoveClient(unsigned int);
+        void    NewClient();
+        void    RemoveClient(unsigned int);
         void    ThreadRunner();
     };
 }

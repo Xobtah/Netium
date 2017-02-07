@@ -59,25 +59,23 @@ namespace Netium
     int Server::OSSelect(int maxfd, fd_set *readfd, fd_set *writefd, struct timeval *to, fd_set *exceptfd)
     { return (select(maxfd, readfd, writefd, exceptfd, to)); }
 
-    bool    Server::NewClient() try
+    void    Server::NewClient() try
     {
         unsigned int    id = 0;
         ClientStruct c(id, _acceptor.Accept());
 
-        std::cout << "New client" << std::endl;
         id = _clients.Insert(c);
         _clients.FindOne(id)._id = id;
-        return (false);
+        this->Emit("connexion");
     }
     catch (ProtocolException const &pe) { throw ServerException("ProtocolException: " + std::string(pe.what())); }
 
-    bool    Server::RemoveClient(unsigned int _id) try
+    void    Server::RemoveClient(unsigned int _id) try
     {
         _clients.Remove(_id);
-        std::cout << "Rem client" << std::endl;
-        return (false);
+        this->Emit("disconnect");
     }
-    catch (Basium::DataBaseException const &dbe) { static_cast<void>(dbe); return (false); }
+    catch (Basium::DataBaseException const &dbe) { static_cast<void>(dbe); }
 
     void    Server::ThreadRunner() try
     {
@@ -91,15 +89,8 @@ namespace Netium
 
             timeout.tv_sec = 0;
             timeout.tv_usec = _timeOut;
-            switch (this->OSSelect(max, &rfs, NULL, &timeout))
-            {
-                case -1:
-                    continue;
-                case 0:
-                    continue;
-                default:
-                    break;
-            }
+            if (this->OSSelect(max, &rfs, NULL, &timeout) <= 0)
+                continue;
             if (_acceptor.IsInFdSet(&rfs))
             {
                 this->NewClient();

@@ -8,6 +8,7 @@ SRC     = main.cpp \
 	$(SOURCES)/TCPStream.cpp \
 	$(SOURCES)/UnixSock.cpp \
 	../Poolium/src/Thread.cpp \
+	../Emitium/src/EventEmitter.cpp \
 
 OBJ     = $(SRC:.cpp=.o)
 

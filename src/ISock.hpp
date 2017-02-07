@@ -1,7 +1,7 @@
 #ifndef ISOCK_HPP_
 #define ISOCK_HPP_
 
-#include "SockInclude.hpp"
+#include <string>
 
 namespace Netium
 {

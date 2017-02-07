@@ -10,7 +10,7 @@
 
 #include "../src/Struct.hpp"
 
-#include "../src/DataBase.hpp"
+#include "../Basium/DataBase.hpp"
 #include "../src/Server.hpp"
 
 #endif //NETIUM_NETIUM_HPP

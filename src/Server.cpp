@@ -16,11 +16,11 @@ namespace Netium
      */
 
     Server::Server(int port, int queue)
-    try : _clients([](ClientStruct &c) { delete c.stream; }), _acceptor(port, queue) {}
+    try : _clients([](ClientStruct &c) { delete c.stream; }), _acceptor(port, queue), _thread(*this), _timeOut(500000) {}
     catch (ProtocolException const &pe) { throw ServerException("ProtocolException: " + std::string(pe.what())); }
 
-    Server::Server(DataBase<ClientStruct> &db, int port, int queue)
-    try : _clients(db, [](ClientStruct &c) { delete c.stream; }), _acceptor(port, queue) {}
+    Server::Server(Basium::DataBase<ClientStruct> &db, int port, int queue)
+    try : _clients(db, [](ClientStruct &c) { delete c.stream; }), _acceptor(port, queue), _thread(*this), _timeOut(500000) {}
     catch (ProtocolException const &pe) { throw ServerException("ProtocolException: " + std::string(pe.what())); }
 
     Server::~Server() {}
@@ -29,52 +29,13 @@ namespace Netium
      *  Public member functions
      */
 
-    bool    Server::Select(uint8_t *packet, ClientStruct **client, unsigned int usec_timeout) try
-    {
-        fd_set  rfs;
-        int max = this->CreateFdSet(&rfs);
-        timeval timeout;
-        uint8_t bufPack[2];
-        ClientStruct    *bufCli = NULL;
+    int     Server::SendPacket(ClientStruct const &client, uint8_t *packet, unsigned int size) { return (client.stream->Send(packet, size)); }
 
-        timeout.tv_sec = 0;
-        timeout.tv_usec = usec_timeout;
-        switch (this->OSSelect(max, &rfs, NULL, &timeout))
-        {
-            case -1:
-                return (false);
-            case 0:
-                return (false);
-            default:
-                break;
-        }
-        if (_acceptor.IsInFdSet(&rfs))
-            return (this->NewClient());
-        if (!packet)
-        {
-            packet = bufPack;
-            packet[0] = 0;
-            packet[1] = 0;
-        }
-        else
-            memset(packet, 0, PACKET_MAX_SIZE);
-        bufCli = &_clients.FindOne([](const ClientStruct &c, void *rfs)
-                                   {
-                                       return (c.stream->IsInFdSet(reinterpret_cast<fd_set*>(rfs)));
-                                   }, &rfs);
-        if (client)
-            *client = bufCli;
-        if (!bufCli->stream->Recv(packet, PACKET_MAX_SIZE) || !static_cast<uint16_t>(*packet))
-            return (this->RemoveClient(bufCli->_id));
-        return (true);
-    }
-    catch (ProtocolException const &pe) { throw ServerException("ProtocolException: " + std::string(pe.what())); }
-    catch (DataBaseException const &dbe) { std::cerr << "Select: " + std::string(dbe.what()) << std::endl; return (false); }
+    unsigned int    Server::GetTimeOut() const { return (_timeOut); }
 
-    int     Server::SendPacket(ClientStruct const &client, uint8_t *packet, unsigned int size)
-    {
-        return (client.stream->Send(packet, size));
-    }
+    void            Server::SetTimeOut(unsigned int to) { _timeOut = to; }
+
+    Poolium::Thread &Server::operator()() { return (_thread); }
 
     /*
      *  Private membre functions
@@ -116,5 +77,47 @@ namespace Netium
         std::cout << "Rem client" << std::endl;
         return (false);
     }
-    catch (DataBaseException const &dbe) { static_cast<void>(dbe); return (false); }
+    catch (Basium::DataBaseException const &dbe) { static_cast<void>(dbe); return (false); }
+
+    void    Server::ThreadRunner() try
+    {
+        while (42)
+        {
+            fd_set  rfs;
+            int max = this->CreateFdSet(&rfs);
+            timeval timeout;
+            ClientStruct    *bufCli = NULL;
+            uint8_t         packet[PACKET_MAX_SIZE];
+
+            timeout.tv_sec = 0;
+            timeout.tv_usec = _timeOut;
+            switch (this->OSSelect(max, &rfs, NULL, &timeout))
+            {
+                case -1:
+                    continue;
+                case 0:
+                    continue;
+                default:
+                    break;
+            }
+            if (_acceptor.IsInFdSet(&rfs))
+            {
+                this->NewClient();
+                continue;
+            }
+            memset(packet, 0, PACKET_MAX_SIZE);
+            bufCli = &_clients.FindOne([](const ClientStruct &c, void *rfs)
+                                       {
+                                           return (c.stream->IsInFdSet(reinterpret_cast<fd_set*>(rfs)));
+                                       }, &rfs);
+            if (!bufCli->stream->Recv(packet, PACKET_MAX_SIZE) || !static_cast<uint16_t>(*packet))
+            {
+                this->RemoveClient(bufCli->_id);
+                continue;
+            }
+            std::cout << packet << std::endl;
+        }
+    }
+    catch (ProtocolException const &pe) { throw ServerException("ProtocolException: " + std::string(pe.what())); }
+    catch (Basium::DataBaseException const &dbe) { std::cerr << "Select: " + std::string(dbe.what()) << std::endl; }
 }

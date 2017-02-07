@@ -1,22 +1,22 @@
 NAME    = SimpleTest
 
-SOURCES = ../../src
-HEADER  = ../../hdr
+SOURCES = ../src
 
 SRC     = main.cpp \
 	$(SOURCES)/Server.cpp \
 	$(SOURCES)/TCPAcceptor.cpp \
 	$(SOURCES)/TCPStream.cpp \
 	$(SOURCES)/UnixSock.cpp \
+	../Poolium/src/Thread.cpp \
 
 OBJ     = $(SRC:.cpp=.o)
 
-CXXFLAGS    = -std=c++11 -W -Wall -Werror
+CXXFLAGS    = -std=c++11 -W -Wall -Werror -pthread
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	g++ $(CXXFLAGS) $(OBJ) -o $(NAME)
+	g++ -pthread $(OBJ) -o $(NAME)
 
 clean:
 	rm -rf $(OBJ)

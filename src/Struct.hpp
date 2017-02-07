@@ -5,7 +5,12 @@
 #ifndef STRUCT_HPP_
 #define STRUCT_HPP_
 
+#include <vector>
+#include <array>
+
 #include "TCPStream.hpp"
+
+#define PACKET_MAX_SIZE	512
 
 namespace Netium
 {
@@ -16,6 +21,7 @@ namespace Netium
 
 		unsigned int    _id;
 		TCPStream		*stream;
+		std::vector<std::array<uint8_t, PACKET_MAX_SIZE> >	buf;
 	};
 }
 

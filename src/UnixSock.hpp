@@ -2,6 +2,7 @@
 #define UNIXSOCK_HPP_
 
 #include <string>
+#include "SockInclude.hpp"
 #include "ISock.hpp"
 
 namespace Netium

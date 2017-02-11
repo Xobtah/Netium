@@ -7,6 +7,9 @@ SRC     = main.cpp \
 	$(SOURCES)/TCPAcceptor.cpp \
 	$(SOURCES)/TCPStream.cpp \
 	$(SOURCES)/UnixSock.cpp \
+	$(SOURCES)/ClientData.cpp \
+	../Jasonium/src/Json.cpp \
+	../Poolium/src/Mutex.cpp \
 	../Poolium/src/Thread.cpp \
 	../Emitium/src/EventEmitter.cpp \
 

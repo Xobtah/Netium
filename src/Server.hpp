@@ -10,8 +10,8 @@
 #include "SockInclude.hpp"
 #include "TCPStream.hpp"
 #include "TCPAcceptor.hpp"
+#include "ClientData.hpp"
 #include "../Basium/DataBase.hpp"
-#include "Struct.hpp"
 
 #include "../Poolium/src/IThreadRunner.hpp"
 #include "../Poolium/src/Thread.hpp"
@@ -42,12 +42,12 @@ namespace Netium
         friend class Poolium::Thread;
 
         Server(int port = 4242, int queue = 42);
-        Server(Basium::DataBase<ClientStruct>&, int port = 4242, int queue = 42);
+        Server(Basium::DataBase<ClientData>&, int port = 4242, int queue = 42);
         ~Server();
 
-        bool    Select(uint8_t *packet = NULL, ClientStruct **client = NULL, unsigned int usec_timeout = 500000);
+        bool    Select(uint8_t *packet = NULL, ClientData **client = NULL, unsigned int usec_timeout = 500000);
 
-        int     SendPacket(ClientStruct const &, uint8_t*, unsigned int);
+        int     SendPacket(ClientData const &, uint8_t*, unsigned int);
 
         unsigned int    GetTimeOut() const;
         void            SetTimeOut(unsigned int);
@@ -55,7 +55,7 @@ namespace Netium
         Poolium::Thread &operator()();
 
     private:
-        Basium::DataBase<ClientStruct>  _clients;
+        Basium::DataBase<ClientData>  _clients;
         TCPAcceptor             _acceptor;
         Poolium::Thread     _thread;
         unsigned int        _timeOut;

@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <utility>
 
 #include "../hdr/Netium.hpp"
 
@@ -10,16 +11,17 @@ int main()
 {
     Netium::Server  server;
 
-    server.On("connexion", [](void *client) -> void*
+    server.On("connexion", [](Netium::ClientData *c)
     {
-        (void) client;
-        std::cout << "New client" << std::endl;
-        return (NULL);
-    }).On("disconnect", [](void *client) -> void*
+        std::cout << c->GetId() << ": " << "Connexion" << std::endl;
+        c->On("data", [=]()
+        {
+            std::cout << c->GetId() << ": " << c->Front();
+            c->Pop();
+        });
+    }).On("disconnect", [](Netium::ClientData *c)
     {
-        (void) client;
-        std::cout << "Rem client" << std::endl;
-        return (NULL);
+        std::cout << c->GetId() << ": " << "Disconnect" << std::endl;
     });
     server().Join();
     return (0);

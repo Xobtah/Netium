@@ -16,11 +16,13 @@ namespace Netium
      */
 
     Server::Server(int port, int queue)
-    try : _clients([](ClientData &c) { delete c.GetStream(); }), _acceptor(port, queue), _thread(*this), _timeOut(500000) {}
+    try : _clients([](ClientData &c) { delete c.GetStream(); }), _acceptor(port, queue), _timeOut(500000)
+    { _thread.Set([&]() { this->ThreadRunner(); }).Run(); }
     catch (ProtocolException const &pe) { throw ServerException("ProtocolException: " + std::string(pe.what())); }
 
     Server::Server(Basium::DataBase<ClientData> &db, int port, int queue)
-    try : _clients(db, [](ClientData &c) { delete c.GetStream(); }), _acceptor(port, queue), _thread(*this), _timeOut(500000) {}
+    try : _clients(db, [](ClientData &c) { delete c.GetStream(); }), _acceptor(port, queue), _timeOut(500000)
+    { _thread.Set([&]() { this->ThreadRunner(); }).Run(); }
     catch (ProtocolException const &pe) { throw ServerException("ProtocolException: " + std::string(pe.what())); }
 
     Server::~Server() {}

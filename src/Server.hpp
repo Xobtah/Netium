@@ -13,7 +13,6 @@
 #include "ClientData.hpp"
 #include "../Basium/DataBase.hpp"
 
-#include "../Poolium/src/IThreadRunner.hpp"
 #include "../Poolium/src/Thread.hpp"
 
 #include "../Emitium/src/EventEmitter.hpp"
@@ -36,7 +35,7 @@ namespace Netium
     };
 
     // Server
-    class Server : public Poolium::IThreadRunner, public Emitium::EventEmitter
+    class Server : public Emitium::EventEmitter
     {
     public:
         friend class Poolium::Thread;

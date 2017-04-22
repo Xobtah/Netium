@@ -2,27 +2,29 @@
 // Created by xobtah on 25/01/17.
 //
 
+#include <cstring>
 #include <iostream>
-#include <utility>
+
+#include "../src/ClientData.hpp"
 
 #include "../hdr/Netium.hpp"
 
 int main()
 {
-    Netium::Server  server;
+    ium::Server  server;
 
-    server.On("connexion", [](Netium::ClientData *c)
+    server.On("connexion", [&](ium::ClientData *client)
     {
-        std::cout << c->GetId() << ": " << "Connexion" << std::endl;
-        c->On("data", [=]()
+        std::cout << client->GetId() << ": " << "Connexion" << std::endl;
+        client->On("data", [=, &server](uint8_t *data)
         {
-            std::cout << c->GetId() << ": " << c->Front();
-            c->Pop();
+            std::cout << client->GetId() << ": " << data << std::flush;
+            server.SendPacket(*client, data, PACKET_MAX_SIZE);
         });
-    }).On("disconnect", [](Netium::ClientData *c)
+    }).On("disconnect", [](ium::ClientData *client)
     {
-        std::cout << c->GetId() << ": " << "Disconnect" << std::endl;
+        std::cout << client->GetId() << ": " << "Disconnect" << std::endl;
     });
-    server().Join();
+    server.Listen().Join();
     return (0);
 }

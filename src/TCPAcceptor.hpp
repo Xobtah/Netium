@@ -9,14 +9,16 @@
 
 #include "TCPStream.hpp"
 
-namespace Netium
+namespace ium
 {
     class TCPAcceptor
     {
       public:
+        TCPAcceptor();
         TCPAcceptor(int, int);
         ~TCPAcceptor();
 
+        TCPAcceptor &InitSock(int, int);
         TCPStream   *Accept();
 
         void    AddInFdSet(fd_set*) const;

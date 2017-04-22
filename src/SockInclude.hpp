@@ -36,7 +36,7 @@
 
 #include "UnixSock.hpp"
 
-#define OSSOCK Netium::UnixSock
+#define OSSOCK ium::UnixSock
 
 #endif
 
@@ -50,7 +50,7 @@
 #include <Ws2tcpip.h>
 #include "WinSock.hpp"
 
-#define OSSOCK Netium::WinSock
+#define OSSOCK ium::WinSock
 
 #endif
 

@@ -3,25 +3,25 @@
 //
 
 #include <cstring>
-#include <string>
 #include <iostream>
+#include <string>
+#include <algorithm>
 
 #include "Server.hpp"
 #include "ProtocolException.hpp"
 
-namespace Netium
+namespace ium
 {
     /*
      *  Ctor & Dtor
      */
 
-    Server::Server(int port, int queue)
-    try : _clients([](ClientData &c) { delete c.GetStream(); }), _acceptor(port, queue), _thread([&]() { this->ThreadRunner(); }), _timeOut(500000) {}
+    Server::Server()
+    try : _clients([](ClientData &c) { delete c.GetStream(); }), _timeOut(500000) {}
     catch (ProtocolException const &pe) { throw ServerException("ProtocolException: " + std::string(pe.what())); }
 
-    Server::Server(Basium::DataBase<ClientData> &db, int port, int queue)
-    try : _clients(db, [](ClientData &c) { delete c.GetStream(); }), _acceptor(port, queue), _thread([&]() { this->ThreadRunner(); }), _timeOut(500000)
-    { _thread.Set([&]() { this->ThreadRunner(); }).Run(); }
+    Server::Server(Basium::DataBase<ClientData> &db)
+    try : _clients(db, [](ClientData &c) { delete c.GetStream(); }), _timeOut(500000) {}
     catch (ProtocolException const &pe) { throw ServerException("ProtocolException: " + std::string(pe.what())); }
 
     Server::~Server() {}
@@ -30,13 +30,30 @@ namespace Netium
      *  Public member functions
      */
 
-    int     Server::SendPacket(ClientData const &client, uint8_t *packet, unsigned int size) { return (client.GetStream()->Send(packet, size)); }
+    Server  &Server::Listen(int port, int queue)
+    {
+        _acceptor.InitSock(port, queue);
+        _thread.Set([&]() { this->ThreadRunner(); }).Run();
+        return (*this);
+    }
+
+    Server  &Server::SendPacket(ClientData const &client, const uint8_t *packet, unsigned int size)
+    {
+        if (!client.GetStream())
+            throw ServerException("Client stream is null");
+        client.GetStream()->Send(packet, size);
+        return (*this);
+    }
 
     unsigned int    Server::GetTimeOut() const { return (_timeOut); }
 
     void            Server::SetTimeOut(unsigned int to) { _timeOut = to; }
 
-    Poolium::Thread &Server::operator()() { return (_thread); }
+    Server  &Server::Join()
+    {
+        _thread.Join();
+        return (*this);
+    }
 
     /*
      *  Private membre functions
@@ -107,10 +124,9 @@ namespace Netium
                 this->RemoveClient(bufCli->GetId());
                 continue;
             }
-            bufCli->Push(std::string(reinterpret_cast<char*>(packet)));
-            bufCli->Emit("data");
+            bufCli->Emit("data", packet);
         }
     }
     catch (ProtocolException const &pe) { throw ServerException("ProtocolException: " + std::string(pe.what())); }
-    catch (Basium::DataBaseException const &dbe) { std::cerr << "Select: " + std::string(dbe.what()) << std::endl; }
+    catch (Basium::DataBaseException const &dbe) { std::cerr << "DataBaseException: " + std::string(dbe.what()) << std::endl; }
 }

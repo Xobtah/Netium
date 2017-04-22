@@ -7,11 +7,14 @@
 #include "SockException.hpp"
 #include "TCPStream.hpp"
 
-namespace Netium
+namespace ium
 {
     /*
      *  Ctor & Dtor
      */
+
+    TCPAcceptor::TCPAcceptor() try : _sock() {}
+    catch (SockException const &se) { throw ProtocolException("SockException: " + std::string(se.what())); }
 
     TCPAcceptor::TCPAcceptor(int port, int queue) try : _sock()
     {
@@ -26,6 +29,16 @@ namespace Netium
     /*
      *  Public member functions
      */
+
+    TCPAcceptor &TCPAcceptor::InitSock(int port, int queue)
+    try
+    {
+        _sock.Init();
+        _sock.Bind(port);
+        _sock.Listen(queue);
+        return (*this);
+    }
+    catch (SockException const &se) { throw ProtocolException("SockException: " + std::string(se.what())); }
 
     TCPStream   *TCPAcceptor::Accept() try
     {

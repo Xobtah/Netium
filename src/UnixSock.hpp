@@ -5,7 +5,7 @@
 #include "SockInclude.hpp"
 #include "ISock.hpp"
 
-namespace Netium
+namespace ium
 {
 	class UnixSock : public ISock
 	{
@@ -20,7 +20,7 @@ namespace Netium
 		int     Accept(struct sockaddr_in *client = NULL);
 		void    Connect(std::string, int);
 
-		int     Send(void*, unsigned int) const;
+		int     Send(const void*, unsigned int) const;
 		int     Recv(void*, unsigned int) const;
 		int     SendTo(void*, unsigned int, const struct sockaddr*) const;
 		int     RecvFrom(void*, unsigned int, struct sockaddr*) const;

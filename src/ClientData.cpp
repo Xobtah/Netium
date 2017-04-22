@@ -4,7 +4,7 @@
 
 #include "ClientData.hpp"
 
-namespace Netium
+namespace ium
 {
     /*
      *  Ctor & Dtor
@@ -14,7 +14,7 @@ namespace Netium
 
     ClientData::ClientData(unsigned int _id, TCPStream *stream) : _id(_id), _stream(stream) {}
 
-    ClientData::ClientData(const ClientData &cd) : Emitium::EventEmitter(cd), _id(cd._id), _stream(cd._stream) {}
+    ClientData::ClientData(const ClientData &cd) : ium::EventEmitter(cd), _id(cd._id), _stream(cd._stream) {}
 
     ClientData  &ClientData::operator=(const ClientData &cd)
     {
@@ -34,22 +34,4 @@ namespace Netium
     TCPStream   *ClientData::GetStream() const { return (_stream); }
 
     unsigned int    &ClientData::GetId() { return (_id); }
-
-    ClientData  &ClientData::Push(std::string data)
-    {
-        _mutex.Lock();
-        _buffers.push(data);
-        _mutex.Unlock();
-        return (*this);
-    }
-
-    const std::string   &ClientData::Front() const { return (_buffers.front()); }
-
-    ClientData  &ClientData::Pop()
-    {
-        _mutex.Lock();
-        _buffers.pop();
-        _mutex.Unlock();
-        return (*this);
-    }
 }

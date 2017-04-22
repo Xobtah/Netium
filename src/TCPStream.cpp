@@ -4,7 +4,7 @@
 
 #include "TCPStream.hpp"
 
-namespace Netium
+namespace ium
 {
     /*
      *   Ctor & Dtor
@@ -24,8 +24,8 @@ namespace Netium
      *  Public member functions
      */
 
-    int TCPStream::Send(void *buffer, unsigned int len) { return (_sock.Send(buffer, len)); }
-    int TCPStream::Recv(void *buffer, unsigned int len) { return (_sock.Recv(buffer, len)); }
+    int TCPStream::Send(const uint8_t *buffer, unsigned int len) { return (_sock.Send(buffer, len)); }
+    int TCPStream::Recv(uint8_t *buffer, unsigned int len) { return (_sock.Recv(buffer, len)); }
 
     std::string TCPStream::GetIP() { return (_ip); }
     int         TCPStream::GetPort() { return (_port); }

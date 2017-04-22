@@ -3,7 +3,7 @@
 #include "WinSock.hpp"
 #include "SockException.hpp"
 
-namespace Netium
+namespace ium
 {
     WinSock::WinSock() : _socket(INVALID_SOCKET), _port(0) {}
 

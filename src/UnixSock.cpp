@@ -1,7 +1,7 @@
 #include "UnixSock.hpp"
 #include "SockException.hpp"
 
-namespace Netium
+namespace ium
 {
     /*
     **  Ctor & Dtor
@@ -96,7 +96,7 @@ namespace Netium
             throw SockException("Connect failed");
     }
 
-    int UnixSock::Send(void *buffer, unsigned int size) const { return (static_cast<int>(send(_socket, buffer, size, 0))); }
+    int UnixSock::Send(const void *buffer, unsigned int size) const { return (static_cast<int>(send(_socket, buffer, size, 0))); }
     int UnixSock::Recv(void *buffer, unsigned int size) const { return (static_cast<int>(recv(_socket, buffer, size, 0))); }
     int UnixSock::SendTo(void *buffer, unsigned int size, const struct sockaddr *addr) const
     { return (static_cast<int>(sendto(_socket, buffer, size, 0, addr, sizeof(*addr)))); }

@@ -7,7 +7,6 @@
 
 #include <string>
 #include <vector>
-#include <queue>
 
 #include "TCPStream.hpp"
 
@@ -17,9 +16,9 @@
 
 #define PACKET_MAX_SIZE	512
 
-namespace Netium
+namespace ium
 {
-    class   ClientData : public Jasonium::Json, public Emitium::EventEmitter
+    class   ClientData : public Jasonium::Json, public ium::EventEmitter
     {
     public:
         ClientData();
@@ -31,15 +30,9 @@ namespace Netium
         TCPStream   *GetStream() const;
         unsigned int    &GetId();
 
-        ClientData  &Push(std::string);
-        const std::string   &Front() const;
-        ClientData  &Pop();
-
     private:
         unsigned int    _id;
         TCPStream		*_stream;
-        Poolium::Mutex  _mutex;
-        std::queue<std::string> _buffers;
     };
 }
 

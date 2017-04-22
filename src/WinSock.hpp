@@ -4,7 +4,7 @@
 #include "SockInclude.hpp"
 #include "ISock.hpp"
 
-namespace Netium
+namespace ium
 {
 	class   WinSock : public ISock
 	{

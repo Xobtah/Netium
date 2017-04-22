@@ -7,7 +7,7 @@
 
 #include <exception>
 
-namespace Netium
+namespace ium
 {
 	class SockException : public std::exception
 	{

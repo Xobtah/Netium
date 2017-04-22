@@ -9,7 +9,7 @@
 
 #include "SockInclude.hpp"
 
-namespace Netium
+namespace ium
 {
     class TCPStream
     {
@@ -18,8 +18,8 @@ namespace Netium
 
         ~TCPStream();
 
-        int Send(void* buffer, unsigned int len);
-        int Recv(void* buffer, unsigned int len);
+        int Send(const uint8_t*, unsigned int);
+        int Recv(uint8_t*, unsigned int);
 
         std::string GetIP();
         int         GetPort();

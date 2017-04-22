@@ -19,7 +19,7 @@
 
 #define PACKET_MAX_SIZE 512
 
-namespace Netium
+namespace ium
 {
     // ServerException
     class ServerException : public std::exception
@@ -35,27 +35,25 @@ namespace Netium
     };
 
     // Server
-    class Server : public Emitium::EventEmitter
+    class Server : public ium::EventEmitter
     {
     public:
-        friend class Poolium::Thread;
-
-        Server(int port = 4242, int queue = 42);
-        Server(Basium::DataBase<ClientData>&, int port = 4242, int queue = 42);
+        Server();
+        Server(Basium::DataBase<ClientData>&);
         ~Server();
 
-        bool    Select(uint8_t *packet = NULL, ClientData **client = NULL, unsigned int usec_timeout = 500000);
+        Server  &Listen(int port = 4242, int queue = 42);
 
-        int     SendPacket(ClientData const &, uint8_t*, unsigned int);
+        Server  &SendPacket(ClientData const&, const uint8_t*, unsigned int);
 
         unsigned int    GetTimeOut() const;
         void            SetTimeOut(unsigned int);
 
-        Poolium::Thread &operator()();
+        Server  &Join();
 
     private:
         Basium::DataBase<ClientData>  _clients;
-        TCPAcceptor             _acceptor;
+        TCPAcceptor         _acceptor;
         Poolium::Thread     _thread;
         unsigned int        _timeOut;
 

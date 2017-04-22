@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace Netium
+namespace ium
 {
 	class ISock
 	{
@@ -51,7 +51,7 @@ namespace Netium
 		**  Parameters: Pointer to the buffer to send, the size of the buffer
 		**  Returns: Number of bytes sent
 		*/
-		virtual int     Send(void*, unsigned int) const = 0;
+		virtual int     Send(const void*, unsigned int) const = 0;
 
 		/*
 		**  Recv(void *buffer, unsigned int size)

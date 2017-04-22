@@ -3,7 +3,7 @@
 
 #include <exception>
 
-namespace Netium
+namespace ium
 {
     class ProtocolException : public std::exception
     {
